@@ -9,7 +9,7 @@
     "predev": "ts-node src/deploy-commands-dev.ts",
     "dev": "nodemon src/index.ts",
     "predeploy-commands": "npx tsc",
-    "deploy-commands": "node dist/deploy-commands.ts",
+    "deploy-commands": "node dist/deploy-commands.js",
     "test": "ts-node src/test.ts"
   },
   "author": "William Rembish",
