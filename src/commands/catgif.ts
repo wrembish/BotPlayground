@@ -4,6 +4,7 @@ import Command from '../classes/Command'
 
 /**
  * Command to get a random cat gif sent to the channel
+ * uses https://cataas.com/#/ api
  */
 
 export const command : Command = new Command(
