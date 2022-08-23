@@ -1,5 +1,5 @@
 # BotPlayground
-Workspace for playing around with Discord Bot development
+#### Workspace for playing around with Discord Bot development
 
 ## Environment Variables
 * TOKEN="YOUR DISCORD BOT TOKEN GOES HERE"
