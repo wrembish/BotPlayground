@@ -41,6 +41,7 @@ export const command : Command = new Command(
             if(drink[`strIngredient${i+1}`] != null) {
                 embedDescription += drink[`strIngredient${i+1}`]
                 if(drink[`strMeasure${i+1}`] != null) embedDescription += ` : ${drink[`strMeasure${i+1}`]}\n`
+                else embedDescription += '\n'
             } else break
         }
         embedDescription += `\n**__Instructions__**\n${drink.strInstructions}`
