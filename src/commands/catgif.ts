@@ -15,11 +15,13 @@ export const command : Command = new Command(
      */
     async (interaction : ModalSubmitInteraction) : Promise<void> => {
         let result : any
+        // Get a random catgif from the Cats As A Service API
         await fetch('https://cataas.com/cat/gif?json=true')
             .then((response : Response) : any => response.json())
             .then((data : any) : void => result = data)
             .catch((error : any) : void => console.error('Error: ', error))
 
+        // Reply to the interaction with an embed of the cat gif retrieved
         if(result) await interaction.reply({ embeds : [new EmbedBuilder().setImage(`https://cataas.com${result.url}`).setColor(EMBEDCOLOR)]})
         else await interaction.reply({ content : 'There was an error while executing this command', ephemeral : true })
     }
