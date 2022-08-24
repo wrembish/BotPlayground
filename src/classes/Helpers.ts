@@ -27,3 +27,20 @@ export function convert(strToConvert : string) : string {
     }
     return output
 }
+
+export function buildCronStr(timeStr : string) : string {
+    let output : string = ''
+    const timeOfDay : string = timeStr.endsWith('AM') ? 'AM' : 'PM'
+    const timeSplit : Array<string> = timeStr.substring(0, timeStr.length-2).split(':')
+
+    output += timeSplit[1] + ' '
+
+    if(timeSplit[0] == '12' && timeOfDay == 'AM') output += '0 '
+    else if(timeSplit[0] == '12' && timeOfDay == 'PM') output += '12 '
+    else if(timeOfDay ==  'PM') output += (12 + parseInt(timeSplit[0])).toString() + ' '
+    else output += timeSplit[0] + ' '
+
+    output += '* * *'
+
+    return output
+}
