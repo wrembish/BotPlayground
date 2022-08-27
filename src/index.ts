@@ -5,12 +5,14 @@ import { Client as DiscordClient, GatewayIntentBits, Collection, Awaitable } fro
 import Command from './classes/Command'
 import { MongoClient, ServerApiVersion, Collection as MongoCollection } from 'mongodb'
 import { MAPCOLLECTION, MONGODATABASE } from './classes/Constants'
+import CronJob from './classes/CronJob'
 
 // Create the discord bot client
 const discClient : DiscordClient = new DiscordClient({ intents : [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.DirectMessages
 ]})
 
 // Create the slash command Collection
@@ -37,6 +39,7 @@ for(const file of eventFiles) {
 
 // Create and connect to the mongodb Client
 const map : Collection<string, string[]> = new Collection<string, string[]>()
+const crnJbs : CronJob[] = []
 let dbClient : MongoClient | undefined
 if(process.env.MONGODB_URL) {
     dbClient = new MongoClient(process.env.MONGODB_URL, { serverApi : ServerApiVersion.v1 })
@@ -63,7 +66,8 @@ if(process.env.MONGODB_URL) {
 // Login with the discord bot client
 discClient.login(process.env.TOKEN)
 
-// Export the commands and the mongodb Client
+// Export constants that may need to be used elsewhere
 export const Commands : Collection<string, Command> = cmmnds
 export const Database : MongoClient | undefined = dbClient
 export const ConversionMap : Collection<string, string[]> = map
+export const CronJobs : CronJob[] = crnJbs

@@ -1,7 +1,7 @@
 import { COMMANDCHAR, DATABASEERRORMESSAGE, EMBEDCOLOR, EMOJI } from '../classes/Constants'
 import * as cron from 'node-cron'
 import DiscordEvent from '../classes/DiscordEvent'
-import { buildCronStr, convert } from '../classes/Helpers'
+import { buildCronStr, convert, getDogFactsEmbed } from '../classes/Helpers'
 import { EmbedBuilder, Message } from 'discord.js'
 
 export const event : DiscordEvent = new DiscordEvent(
@@ -21,7 +21,8 @@ export const event : DiscordEvent = new DiscordEvent(
         // Classic ping command as a message command
         if(msg == COMMANDCHAR+'ping') await message.channel.send('Pong!')
         // Command for quick testing
-        else if(msg === COMMANDCHAR+'test') {
+        else if(msg === COMMANDCHAR+'test' && message.channel.isDMBased()) {
+            message.author.send('Hi')
             // Do something
         } else if(msg.startsWith(EMOJI) && msg.split(' ').length > 1) {
             const msgToConvert : string = msg.substring(EMOJI.length)
@@ -33,28 +34,38 @@ export const event : DiscordEvent = new DiscordEvent(
             const timeStr : string = msg.substring(`${COMMANDCHAR}set channel dogfacts `.length)
             if(timeStr != '' && (timeStr.endsWith('AM') || timeStr.endsWith('PM'))) {
                 cron.schedule(buildCronStr(timeStr), async () : Promise<void> => {
+                    const messageEmbed : EmbedBuilder = await getDogFactsEmbed()
+                
+                    await message.channel.send({ embeds : [messageEmbed] })
+                })
+                await message.channel.send(`**Channel successfully set to recieve a random dogfact daily at __${timeStr}__**`)
+            }
+        } else if(msg.startsWith(`${COMMANDCHAR}set channel catfacts `)) {
+            const timeStr : string = msg.substring(`${COMMANDCHAR}set channel catfacts `.length)
+            if(timeStr != '' && (timeStr.endsWith('AM') || timeStr.endsWith('PM'))) {
+                const job : cron.ScheduledTask = cron.schedule(buildCronStr(timeStr), async () : Promise<void> => {
                     let factResult : any
-                    await fetch('http://dog-api.kinduff.com/api/facts')
+                    await fetch('https://meowfacts.herokuapp.com/')
                         .then((response : Response) : any => response.json())
                         .then((data : any) : void => factResult = data)
                         .catch((error : any) : void => console.error('Error: ', error))
                     
                     let imageResult : any
-                    await fetch('https://dog.ceo/api/breeds/image/random')
+                    await fetch('https://cataas.com/cat?json=true')
                         .then((response : Response) : any => response.json())
                         .then((data : any) : void => imageResult = data)
                         .catch((error : any) : void => console.error('Error: ', error))
 
                     const messageEmbed : EmbedBuilder = new EmbedBuilder()
-                        .setTitle('**__Daily Dog Fact__**')
-                        .setDescription(factResult.facts[0])
+                        .setTitle('**__Daily Cat Fact__**')
+                        .setDescription(factResult.data[0])
                         .setColor(EMBEDCOLOR)
-                        .setImage(imageResult.message)
+                        .setImage(`https://cataas.com${imageResult.url}`)
                     
                     
                     await message.channel.send({ embeds : [messageEmbed] })
                 })
-                await message.channel.send(`**Channel successfully set to recieve a random dogfact daily at __${timeStr}__**`)
+                await message.channel.send(`**Channel successfully set to recieve a random catfact daily at __${timeStr}__**`)
             }
         }
     }
